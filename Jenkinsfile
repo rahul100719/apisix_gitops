@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.10-slim'
+            args '-u root'   // allow apt install inside container
+        }
+    }
 
     environment {
         PROJECT = "apisix_gitops"
@@ -12,6 +17,17 @@ pipeline {
     }
 
     stages {
+        
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                    apt update
+                    apt install -y make zip git curl
+                    pip install poetry
+                '''
+            }
+        }
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -60,7 +76,10 @@ pipeline {
             }
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
-                    sh 'export KUBECONFIG=$KUBECONFIG_FILE; make deploy'
+                    sh '''
+                        export KUBECONFIG=$KUBECONFIG_FILE
+                        make deploy
+                    '''
                 }
             }
         }
