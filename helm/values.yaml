@@ -1,0 +1,5 @@
+replicaCount: 1
+
+image:
+  repository: apache/apisix
+  tag: "2.14.0-alpine"
