@@ -1,73 +1,82 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.10-slim'
-            args '-u root'
-        }
-    }
 
-    environment {
-        PROJECT = "apisix_gitops"
-        ZIP = "${PROJECT}.zip"
-        ENCRYPTED_CLIENTS_RAHUL = credentials('ENCRYPTED_CLIENTS_RAHUL')
-    }
+    agent none    // run cleaning outside docker
 
     stages {
-
         stage('Clean Workspace') {
+            agent any
             steps {
-                deleteDir()   // <---- FIX: removes old files
+                deleteDir()
             }
         }
 
-        stage('Install Dependencies') {
-            steps {
-                sh '''
-                    apt update
-                    apt install -y make zip git curl
-                    pip install poetry
-                '''
+        stage('Run Pipeline in Docker') {
+            agent {
+                docker {
+                    image 'python:3.10-slim'
+                    args '-u root'
+                }
             }
-        }
 
-        stage('Checkout') {
-            steps {
-                checkout scm
+            environment {
+                PROJECT = "apisix_gitops"
+                ZIP = "${PROJECT}.zip"
+                ENCRYPTED_CLIENTS_RAHUL = credentials('ENCRYPTED_CLIENTS_RAHUL')
             }
-        }
 
-        stage('Init') {
-            steps { sh 'make init' }
-        }
+            stages {
 
-        stage('Lint') {
-            steps { sh 'make lint || true' }
-        }
+                stage('Install Dependencies') {
+                    steps {
+                        sh '''
+                            apt update
+                            apt install -y make zip git curl
+                            pip install poetry
+                        '''
+                    }
+                }
 
-        stage('Decrypt Secret') {
-            steps {
-                sh '''
-                    echo "Encrypted value: $ENCRYPTED_CLIENTS_RAHUL"
-                    make get_secret ENCRYPTED_CLIENTS_RAHUL="$ENCRYPTED_CLIENTS_RAHUL"
-                '''
-            }
-        }
+                stage('Checkout') {
+                    steps {
+                        checkout scm
+                    }
+                }
 
-        stage('Build') {
-            steps { sh 'make build' }
-        }
+                stage('Init') {
+                    steps { sh 'make init' }
+                }
 
-        stage('Test') {
-            steps { sh 'make test' }
-        }
+                stage('Lint') {
+                    steps { sh 'make lint || true' }
+                }
 
-        stage('Package') {
-            steps { sh 'make zip' }
-        }
+                stage('Decrypt Secret') {
+                    steps {
+                        sh '''
+                            echo "Encrypted value: $ENCRYPTED_CLIENTS_RAHUL"
+                            make get_secret ENCRYPTED_CLIENTS_RAHUL="$ENCRYPTED_CLIENTS_RAHUL"
+                        '''
+                    }
+                }
 
-        stage('Archive') {
-            steps {
-                archiveArtifacts artifacts: '*.zip'
+                stage('Build') {
+                    steps { sh 'make build' }
+                }
+
+                stage('Test') {
+                    steps { sh 'make test' }
+                }
+
+                stage('Package') {
+                    steps { sh 'make zip' }
+                }
+
+                stage('Archive') {
+                    steps {
+                        archiveArtifacts artifacts: '*.zip'
+                    }
+                }
+
             }
         }
     }
