@@ -1,5 +1,4 @@
 import os
-import yaml
 from cryptography.fernet import Fernet
 
 key = open("../apisix_secret.key", "rb").read()
