@@ -51,7 +51,7 @@ pipeline {
 
    stage('Decrypt Secret') {
     steps {
-        withCredentials([string(credentialsId: 'ENCRYPTED_CLIENTS_Rahul', variable: 'SECRET_RAW')]) {
+        withCredentials([string(credentialsId: 'ENCRYPTED_CLIENTS_RAHUL', variable: 'SECRET_RAW')]) {
             sh '''
                 echo "Secret is: $SECRET_RAW" > secret.txt
                 make get_secret
