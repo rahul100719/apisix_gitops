@@ -49,14 +49,17 @@ pipeline {
             }
         }
 
-       stage('Decrypt Secret') {
+   stage('Decrypt Secret') {
     steps {
-        sh '''
-            echo "Encrypted value: $ENCRYPTED_CLIENTS_RAHUL"
-            make get_secret ENCRYPTED_CLIENTS_RAHUL="$ENCRYPTED_CLIENTS_RAHUL"
-        '''
+        withCredentials([string(credentialsId: 'ENCRYPTED_CLIENTS_Rahul', variable: 'SECRET_RAW')]) {
+            sh '''
+                echo "Secret is: $SECRET_RAW" > secret.txt
+                make get_secret
+            '''
+        }
     }
 }
+
 
         stage('Build') {
             steps {

@@ -1,26 +1,12 @@
-import os
 import json
 
-# Jenkins passes: ENCRYPTED_CLIENTS_RAHUL
-jenkins_value = os.environ.get("ENCRYPTED_CLIENTS_RAHUL")
+with open("secret.txt", "r") as f:
+    secret = f.read().strip()
 
-print("Raw Jenkins Value:", jenkins_value)
-
-if not jenkins_value:
-    print("Error: ENCRYPTED_CLIENTS_RAHUL not found")
-    exit(1)
+print("Python received secret:", secret)  # THIS WILL PRINT REAL SECRET
 
 try:
-    # If the Jenkins secret contains JSON
-    parsed = json.loads(jenkins_value)
-    print("Parsed JSON:", parsed)
-
-except json.JSONDecodeError:
-    # If it's just a string, not JSON
-    print("Value is not JSON, treated as raw string.")
-    parsed = jenkins_value
-
-# TODO: Add your decryption logic here if needed
-# decrypted = decrypt(parsed)
-
-print("Final Secret Value:", parsed)
+    decoded = json.loads(secret)
+    print("Parsed JSON:", decoded)
+except:
+    print("Not JSON:", secret)
