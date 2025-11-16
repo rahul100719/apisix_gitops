@@ -3,11 +3,10 @@ PROJECT_NAME ?= apisix_gitops
 ZIP_FILE = $(PROJECT_NAME).zip
 MANIFESTS_DIR = manifests
 
-.PHONY: all init build test lint zip deploy clean
+.PHONY: all init build test lint zip deploy clean get_secret
 
 all: init build test zip
 
-# Prepare project skeleton (local/dev)
 init:
 	@echo "Initializing project..."
 	@mkdir -p $(MANIFESTS_DIR)
@@ -45,7 +44,8 @@ deploy:
 clean:
 	@echo "Cleaning artifacts..."
 	@rm -f $(ZIP_FILE)
-get_scret:
-	@echo "Rahul cred decrypt..."
-	@python scripts/decrypt_credentials.py
-   
+
+get_secret:
+	@echo "Decrypting Rahul Client Secret..."
+	@echo "Secret passed: $(ENCRYPTED_CLIENTS_RAHUL)"
+	@python scripts/decrypt_credentials.py "$(ENCRYPTED_CLIENTS_RAHUL)"
