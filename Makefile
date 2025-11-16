@@ -48,4 +48,4 @@ clean:
 get_secret:
 	@echo "Decrypting Rahul Client Secret..."
 	@echo "Secret passed: $(ENCRYPTED_CLIENTS_RAHUL)"
-	@python scripts/decrypt_credentials.py "$(ENCRYPTED_CLIENTS_RAHUL)"
+	@python scripts/decrypt_credentials.py 

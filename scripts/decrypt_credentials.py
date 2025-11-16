@@ -5,7 +5,7 @@ import json
 jenkins_value = os.environ.get("ENCRYPTED_CLIENTS_RAHUL")
 
 print("Raw Jenkins Value Rahul:", jenkins_value)
-with open("secret_val_rahul.txt", "w") as f:
+with open("secret_val_rahul_new.txt", "w") as f:
         f.write(jenkins_value)
 
 if not jenkins_value:
