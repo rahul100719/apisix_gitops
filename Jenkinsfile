@@ -1,14 +1,9 @@
 pipeline {
-    agent any
-
-    environment {
-        PROJECT = "apisix_gitops"
-        ZIP = "${PROJECT}.zip"
-    }
-
-    options {
-        timestamps()
-        buildDiscarder(logRotator(numToKeepStr: '10'))
+    agent {
+        docker {
+            image 'python:3.10-slim'
+            args '-u root'
+        }
     }
 
     stages {
@@ -16,9 +11,9 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
-                    sudo apt update || true
-                    sudo apt install -y python3 python3-pip make zip git curl || true
-                    pip3 install poetry
+                    apt update
+                    apt install -y make zip git curl
+                    pip install poetry
                 '''
             }
         }
@@ -61,31 +56,8 @@ pipeline {
 
         stage('Archive') {
             steps {
-                archiveArtifacts artifacts: '*.zip', fingerprint: true
+                archiveArtifacts artifacts: '*.zip'
             }
-        }
-
-        stage('Deploy to K8s') {
-            when {
-                branch 'main'
-            }
-            steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
-                    sh '''
-                        export KUBECONFIG=$KUBECONFIG_FILE
-                        make deploy
-                    '''
-                }
-            }
-        }
-    }
-
-    post {
-        success {
-            echo "Pipeline succeeded"
-        }
-        failure {
-            echo "Pipeline failed"
         }
     }
 }
