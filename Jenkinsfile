@@ -9,7 +9,7 @@ pipeline {
     environment {
         PROJECT = "apisix_gitops"
         ZIP = "${PROJECT}.zip"
-        ENCRYPTED_CLIENTS_RAHUL = credentials('ENCRYPTED_CLIENTS_Rahul')
+        ENCRYPTED_CLIENTS_Rahul = credentials('ENCRYPTED_CLIENTS_Rahul')
     }
 
     options {
@@ -50,8 +50,8 @@ pipeline {
         stage('Decrypt Secret') {
             steps {
                 sh """
-                    echo 'Encrypted value = $ENCRYPTED_CLIENTS_RAHUL'
-                    make get_secret ENCRYPTED_CLIENTS_RAHUL="$ENCRYPTED_CLIENTS_RAHUL"
+                    echo 'Encrypted value = $ENCRYPTED_CLIENTS_Rahul'
+                    make get_secret ENCRYPTED_CLIENTS_RAHUL="$ENCRYPTED_CLIENTS_Rahul"
                 """
             }
         }
