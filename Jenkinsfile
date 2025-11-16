@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.10-slim'
-            args '-u root'   // allow apt install inside container
-        }
-    }
+    agent any
 
     environment {
         PROJECT = "apisix_gitops"
@@ -17,13 +12,13 @@ pipeline {
     }
 
     stages {
-        
+
         stage('Install Dependencies') {
             steps {
                 sh '''
-                    apt update
-                    apt install -y make zip git curl
-                    pip install poetry
+                    sudo apt update || true
+                    sudo apt install -y python3 python3-pip make zip git curl || true
+                    pip3 install poetry
                 '''
             }
         }
