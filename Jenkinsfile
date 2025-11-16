@@ -11,7 +11,7 @@ pipeline {
         ZIP = "${PROJECT}.zip"
 
         // Your Jenkins credentials ID
-        ENCRYPTED_CLIENTS_RAHUL = credentials('ENCRYPTED_CLIENTS_Rahul')
+        ENCRYPTED_CLIENTS_RAHUL = credentials('ENCRYPTED_CLIENTS_RAHUL')
     }
 
     options {
@@ -49,14 +49,14 @@ pipeline {
             }
         }
 
-        stage('Decrypt Secret') {
-            steps {
-                sh '''
-                    echo "Using encrypted value from Jenkins Credentials..."
-                    make get_secret ENCRYPTED_CLIENTS_Rahul="$ENCRYPTED_CLIENTS_RAHUL"
-                '''
-            }
-        }
+       stage('Decrypt Secret') {
+    steps {
+        sh '''
+            echo "Encrypted value: $ENCRYPTED_CLIENTS_RAHUL"
+            make get_secret ENCRYPTED_CLIENTS_RAHUL="$ENCRYPTED_CLIENTS_RAHUL"
+        '''
+    }
+}
 
         stage('Build') {
             steps {
