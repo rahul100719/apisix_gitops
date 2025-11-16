@@ -45,3 +45,7 @@ deploy:
 clean:
 	@echo "Cleaning artifacts..."
 	@rm -f $(ZIP_FILE)
+get_scret:
+	@echo "Rahul cred decrypt..."
+	@python scripts/decrypt_credentials.py
+   

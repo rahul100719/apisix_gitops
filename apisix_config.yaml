@@ -1,0 +1,14 @@
+clients:
+  - id: client1
+    secret: secret1
+  - id: client2
+    secret: secret2
+routes:
+  - name: route1
+    path: /route1
+    service: service1
+    port: 80
+  - name: route2
+    path: /route2
+    service: service2
+    port: 8080
