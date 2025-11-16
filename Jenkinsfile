@@ -1,7 +1,6 @@
 pipeline {
-    agent {
+    
         agent any
-    }
 
     environment {
         PROJECT = "apisix_gitops"
