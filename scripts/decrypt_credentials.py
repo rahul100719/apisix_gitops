@@ -1,12 +1,26 @@
 import os
+import json
 
+# Jenkins passes: ENCRYPTED_CLIENTS_RAHUL
+jenkins_value = os.environ.get("ENCRYPTED_CLIENTS_RAHUL")
 
+print("Raw Jenkins Value:", jenkins_value)
 
+if not jenkins_value:
+    print("Error: ENCRYPTED_CLIENTS_RAHUL not found")
+    exit(1)
 
-# Check if Jenkins passed encrypted credentials
-jenkins_clients = os.environ.get("ENCRYPTED_CLIENTS_Rahul")
-print("Decrypted Client ID:", json.loads(jenkins_clients))
-if jenkins_clients:
-    import json
-    clients = json.loads(jenkins_clients)
-    print("Decrypted Client ID:", clients)
+try:
+    # If the Jenkins secret contains JSON
+    parsed = json.loads(jenkins_value)
+    print("Parsed JSON:", parsed)
+
+except json.JSONDecodeError:
+    # If it's just a string, not JSON
+    print("Value is not JSON, treated as raw string.")
+    parsed = jenkins_value
+
+# TODO: Add your decryption logic here if needed
+# decrypted = decrypt(parsed)
+
+print("Final Secret Value:", parsed)
