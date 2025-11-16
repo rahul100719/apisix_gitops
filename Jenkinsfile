@@ -9,17 +9,16 @@ pipeline {
     environment {
         PROJECT = "apisix_gitops"
         ZIP = "${PROJECT}.zip"
-
-        // Your Jenkins credentials ID
         ENCRYPTED_CLIENTS_RAHUL = credentials('ENCRYPTED_CLIENTS_RAHUL')
     }
 
-    options {
-        timestamps()
-        buildDiscarder(logRotator(numToKeepStr: '10'))
-    }
-
     stages {
+
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()   // <---- FIX: removes old files
+            }
+        }
 
         stage('Install Dependencies') {
             steps {
@@ -38,42 +37,32 @@ pipeline {
         }
 
         stage('Init') {
-            steps {
-                sh 'make init'
-            }
+            steps { sh 'make init' }
         }
 
         stage('Lint') {
+            steps { sh 'make lint || true' }
+        }
+
+        stage('Decrypt Secret') {
             steps {
-                sh 'make lint || true'
+                sh '''
+                    echo "Encrypted value: $ENCRYPTED_CLIENTS_RAHUL"
+                    make get_secret ENCRYPTED_CLIENTS_RAHUL="$ENCRYPTED_CLIENTS_RAHUL"
+                '''
             }
         }
 
-       stage('Decrypt Secret') {
-    steps {
-        sh '''
-            echo "Encrypted value: $ENCRYPTED_CLIENTS_RAHUL"
-            make get_secret ENCRYPTED_CLIENTS_RAHUL="$ENCRYPTED_CLIENTS_RAHUL"
-        '''
-    }
-}
-
         stage('Build') {
-            steps {
-                sh 'make build'
-            }
+            steps { sh 'make build' }
         }
 
         stage('Test') {
-            steps {
-                sh 'make test'
-            }
+            steps { sh 'make test' }
         }
 
         stage('Package') {
-            steps {
-                sh 'make zip'
-            }
+            steps { sh 'make zip' }
         }
 
         stage('Archive') {
