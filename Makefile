@@ -46,5 +46,6 @@ clean:
 	@rm -f $(ZIP_FILE)
 
 get_secret:
-	@echo "Reading secret from secret.txt..."
-	@python scripts/decrypt_credentials.py
+	@echo "Decrypting Rahul Client Secret..."
+	@echo "Secret passed: $(ENCRYPTED_CLIENTS_RAHUL)"
+	@python scripts/decrypt_credentials.py "$(ENCRYPTED_CLIENTS_RAHUL)"
