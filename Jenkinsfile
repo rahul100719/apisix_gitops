@@ -1,16 +1,22 @@
 pipeline {
-    
-        agent any
+    agent {
+        docker {
+            image 'python:3.10-slim'
+            args '-u root'
+        }
+
+    agent any
 
     environment {
         PROJECT = "apisix_gitops"
         ZIP = "${PROJECT}.zip"
-        ENCRYPTED_CLIENTS_Rahul = credentials('ENCRYPTED_CLIENTS_Rahul')
+        ENCRYPTED_CLIENTS_RAHUL = credentials('ENCRYPTED_CLIENTS_Rahul')
     }
 
     options {
         timestamps()
         buildDiscarder(logRotator(numToKeepStr: '10'))
+
     }
 
     stages {
@@ -42,13 +48,12 @@ pipeline {
                 sh 'make lint || true'
             }
         }
-
-        stage('Decrypt Secret') {
+          stage('Decrpty Screet') {
             steps {
-                sh """
-                    echo 'Encrypted value = $ENCRYPTED_CLIENTS_Rahul'
-                    make get_secret ENCRYPTED_CLIENTS_RAHUL="$ENCRYPTED_CLIENTS_Rahul"
-                """
+                sh '''
+                echo 'encrypted value $ENCRYPTED_CLIENTS_Rahul'
+                make get_scret ENCRYPTED_CLIENTS_Rahul="$ENCRYPTED_CLIENTS_Rahul"
+                '''
             }
         }
 
