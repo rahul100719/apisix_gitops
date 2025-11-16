@@ -5,7 +5,7 @@ pipeline {
             args '-u root'
         }
 
-    agent any
+    }
 
     environment {
         PROJECT = "apisix_gitops"
